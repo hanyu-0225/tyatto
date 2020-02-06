@@ -37,5 +37,22 @@
     chatux.start(true);
 
 </script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+crossorigin="anonymous"></script>
+<script>
+const endpoint = "https://script.google.com/macros/s/AKfycbwIz-mXNRWoL5rTz5prWHPTbdp3uxpYdP_tGS1cLS6EkAoyTdE/exec";
+$.ajax({
+type: 'GET',
+url: endpoint,
+dataType: 'jsonp',
+data: {
+    text: 'Hi,There!'
+},
+success: out => {
+    alert(out.message);
+}
+});
+</script>
 </body>
 </html>
