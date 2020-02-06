@@ -1,36 +1,32 @@
-const express = require('express');
-const app = express();
-const port = 8080;
-// CORSを有効にする
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
-    next();
-});
-app.get('/chat', function (req, res) {
-    const userInputText = req.query.text;
-    const callback = req.query.callback;
-    const response = {output: [ {  
-        "type":"text",
-        "value":"「こんにちは」ですね！"
-     }
-    ]};
-    const msg = response.output;
+function doGet(e) {
+    var userInputText = e.parameter.text;
+    var callback = e.parameter.callback;
+    var response = {output: []};
+    var msg = response.output;
     msg.push({
         type: 'text',
         value: '「' + userInputText + '」ですね！'
     });
+    var responseText = '';
     if (callback) {
-        const responseText = callback + '(' + JSON.stringify(response) + ')';
-        res.set('Content-Type', 'application/javascript');
-        res.send(responseText);
-
+        //JSONP
+        responseText = callback + '(' + JSON.stringify(response) + ')';
+        return send(ContentService.MimeType.JAVASCRIPT, responseText);
     } else {
-        res.json(response);
+        //JSON
+        return sendJson(response);
     }
-    
-});
-
-app.listen(port, () => {
-    console.log('チャットサーバーを開始しました ポート番号:' + port);
-});
+}
+function send(mimeType, responseText) {
+    var textOut = ContentService.createTextOutput();
+    textOut.setMimeType(mimeType);
+    textOut.setContent(responseText);
+    return textOut;
+}
+function sendJson(response) {
+    var textOut = ContentService.createTextOutput();
+    var responseText = JSON.stringify(response);
+    textOut.setMimeType(ContentService.MimeType.JSON);
+    textOut.setContent(responseText);
+    return textOut;
+}
